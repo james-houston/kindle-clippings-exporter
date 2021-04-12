@@ -21,9 +21,9 @@ type Clipping struct {
 const clippingDelimiter = "=========="
 
 const (
-	typeBookmark = iota
-	typeHighlight
-	typeUnknown
+	TypeBookmark = iota
+	TypeHighlight
+	TypeUnknown
 )
 
 func ParseClippingsFile(filePath string) []*Clipping {
@@ -71,7 +71,7 @@ func ParseClippingsFile(filePath string) []*Clipping {
 }
 
 func (c *Clipping) parseTitleAndAuthor(text string) {
-	c.BookTitle = strings.Split(text, "(")[0]
+	c.BookTitle = strings.TrimSpace(strings.Split(text, "(")[0])
 	c.Author = strings.Split(text, "(")[1]
 }
 
@@ -91,13 +91,11 @@ func (c *Clipping) parseTypeAndLocationAndDate(text string) {
 func (c *Clipping) setType(typeCompare string) {
 	switch typeCompare {
 	case "Bookmark":
-		c.Type = typeBookmark
-		break
+		c.Type = TypeBookmark
 	case "Hightlight":
-		c.Type = typeHighlight
-		break
+		c.Type = TypeHighlight
 	default:
-		c.Type = typeUnknown
+		c.Type = TypeUnknown
 	}
 }
 
@@ -138,4 +136,15 @@ func (c *Clipping) timestampToString() string {
 
 func (c *Clipping) parseClippingBody(text string) {
 	c.Body = text
+}
+
+func (c *Clipping) ToString() string {
+	var txt strings.Builder
+	txt.WriteString(c.BookTitle)
+	txt.WriteString(" --- ")
+	txt.WriteString(c.Timestamp.String())
+	txt.WriteString("\n")
+	txt.WriteString(c.Body)
+	txt.WriteString("\n")
+	return txt.String()
 }

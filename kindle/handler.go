@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 
-	"github.com/james-houston/kindle-clippings-exporter/clippings"
+	"kindle_clipping_exporter/clippings"
 )
 
 const (
@@ -26,6 +25,7 @@ type Device struct {
 	clippingsFileExists bool
 	ID                  string
 	allClippings        []*clippings.Clipping
+	NewClippings        []*clippings.Clipping
 }
 
 func NewHandler() *Handler {
@@ -40,17 +40,11 @@ func (h *Handler) NewDevice(mountPoint, ID string) {
 	}
 	device.getClippingsPath()
 	device.updateClippings()
+	device.checkForNewClippings()
+
 	h.Kindles = append(h.Kindles, device)
 	h.NumDevices++
 	log.Printf("New device added to handler. %s. Current number of kindles connected: %d\n", device.ToString(), h.NumDevices)
-}
-
-// TODO: Eventually this should periodically check clippings
-func (h *Handler) runListenerRoutine() {
-	for {
-		fmt.Println("listener routine running")
-		time.Sleep(10 * time.Second)
-	}
 }
 
 // ClippingPath checks for a "My Clippings.txt" file and returns the path to it
@@ -72,9 +66,22 @@ func (d *Device) updateClippings() {
 		return
 	}
 	d.allClippings = clippings.ParseClippingsFile(d.ClippingPath)
-	log.Printf("First clipping: %v\n", d.allClippings[50])
 }
 
+// Checks if any of the clippings are new to the disk
+func (d *Device) checkForNewClippings() {
+	for _, clipping := range d.allClippings {
+		if clipping.IsNewClipping(d.ID) {
+			log.Printf("New clipping in book %s\n", clipping.BookTitle)
+			clipping.WriteToDisk(d.ID)
+			if clipping.Type != clippings.TypeBookmark {
+				d.NewClippings = append(d.NewClippings, clipping)
+			}
+		}
+	}
+}
+
+//ToString returns a string with information on this device. Used for logging.
 func (d *Device) ToString() string {
 	return fmt.Sprintf("Kindle ID: %s, mounted at %s, has clippings: %t, number of clippings: %d", d.ID, d.Path, d.clippingsFileExists, len(d.allClippings))
 }

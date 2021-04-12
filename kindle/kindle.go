@@ -3,7 +3,7 @@ package kindle
 import (
 	"strings"
 
-	usbdrivedetector "github.com/james-houston/kindle-clippings-exporter/usbdrivedetector"
+	usbdrivedetector "kindle_clipping_exporter/usbdrivedetector"
 )
 
 const kindleMountPointSuffix = "KINDLE"
