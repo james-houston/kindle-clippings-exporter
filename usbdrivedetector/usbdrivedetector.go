@@ -1,3 +1,8 @@
+/*
+	This file is a modified version of 1 file in Deepak Jois' golang usbdrivedetector
+	Big thank you to him, you can view his original project here https://github.com/deepakjois/gousbdrivedetector
+*/
+
 package usbdrivedetector
 
 import (
