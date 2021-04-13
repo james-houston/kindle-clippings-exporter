@@ -12,6 +12,8 @@ I leave my kindle disconnected from wifi, so when I want to get my clippings off
 This has only been tested on my Kindle Paperwhite 3 from 2015. No idea how other versions of the kindle will work with this. I use a raspberry pi connected to the kindle via micro usb.
 
 ## Use
+You will need golang installed in order to build or run this code. This was developed with go 1.16 but any relatively recent version should do. You can see instructions on installing Go [here](https://golang.org/doc/install).
+
 Clone this repo and copy the `EXAMPLE.env` file to `.env` and update with your values. If you do not want to send an email and only want .txt files on disk, skip this step. Right now only sending from gmail emails is supported. If you want to send from a different provider you will have to edit the smtp configuration in kindle_emailer.go
 
 From there just connect your kindle and run `go run main.go`. The clippings should be discovered and written to disk.
